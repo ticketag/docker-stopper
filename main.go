@@ -68,7 +68,8 @@ func run() {
 				fmt.Println(fmt.Sprintf("DOCKER STOPPED: %v", seleniumContainers[i].ID))
 			}
 		}
-
+	} else {
+		fmt.Println(fmt.Sprintf("OK: %d Containers", len(seleniumContainers)))
 	}
 	httpClient := http.Client{
 		Timeout: 5 * time.Second,
@@ -77,7 +78,7 @@ func run() {
 	if err != nil {
 		resp, err = httpClient.Get("http://localhost:4444/grid/sessions?action=doCleanupActiveSessions")
 		if err != nil {
-			fmt.Println("ERROR IN ELIMINATING CONTAINERS")
+			fmt.Println("ERROR IN ELIMINATING CONTAINERS ", err.Error())
 			return
 		}
 		resp, _ := ioutil.ReadAll(resp.Body)
@@ -85,6 +86,8 @@ func run() {
 			fmt.Println("SUCCESS IN ELIMINATING ALL CONTAINERS")
 		}
 		return
+	} else {
+		fmt.Println(fmt.Sprintf("\tOK: no reset"))
 	}
 	return
 }
