@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"io/ioutil"
-	"net/http"
 	"os"
 	"sort"
 	"strconv"
@@ -68,26 +66,23 @@ func run() {
 				fmt.Println(fmt.Sprintf("DOCKER STOPPED: %v", seleniumContainers[i].ID))
 			}
 		}
-	} else {
-		fmt.Println(fmt.Sprintf("OK: %d Containers", len(seleniumContainers)))
-	}
-	httpClient := http.Client{
-		Timeout: 5 * time.Second,
-	}
-	resp, err := httpClient.Get("http://localhost:4444/wd/hub/status")
-	if err != nil {
-		resp, err = httpClient.Get("http://localhost:4444/grid/sessions?action=doCleanupActiveSessions")
+
+	} /*
+		httpClient := http.Client{
+			Timeout: 5 * time.Second,
+		}
+		resp, err := httpClient.Get("http://localhost:4444/wd/hub/status")
 		if err != nil {
-			fmt.Println("ERROR IN ELIMINATING CONTAINERS ", err.Error())
+			resp, err = httpClient.Get("http://localhost:4444/grid/sessions?action=doCleanupActiveSessions")
+			if err != nil {
+				fmt.Println("ERROR IN ELIMINATING CONTAINERS")
+				return
+			}
+			resp, _ := ioutil.ReadAll(resp.Body)
+			if string(resp) == "SUCCESS" {
+				fmt.Println("SUCCESS IN ELIMINATING ALL CONTAINERS")
+			}
 			return
-		}
-		resp, _ := ioutil.ReadAll(resp.Body)
-		if string(resp) == "SUCCESS" {
-			fmt.Println("SUCCESS IN ELIMINATING ALL CONTAINERS")
-		}
-		return
-	} else {
-		fmt.Println(fmt.Sprintf("\tOK: no reset"))
-	}
+		}*/
 	return
 }
