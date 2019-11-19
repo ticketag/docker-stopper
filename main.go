@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"io/ioutil"
-	"net/http"
 	"os"
 	"sort"
 	"strconv"
@@ -69,22 +67,22 @@ func run() {
 			}
 		}
 
-	}
-	httpClient := http.Client{
-		Timeout: 5 * time.Second,
-	}
-	resp, err := httpClient.Get("http://localhost:4444/wd/hub/status")
-	if err != nil {
-		resp, err = httpClient.Get("http://localhost:4444/grid/sessions?action=doCleanupActiveSessions")
+	} /*
+		httpClient := http.Client{
+			Timeout: 5 * time.Second,
+		}
+		resp, err := httpClient.Get("http://localhost:4444/wd/hub/status")
 		if err != nil {
-			fmt.Println("ERROR IN ELIMINATING CONTAINERS")
+			resp, err = httpClient.Get("http://localhost:4444/grid/sessions?action=doCleanupActiveSessions")
+			if err != nil {
+				fmt.Println("ERROR IN ELIMINATING CONTAINERS")
+				return
+			}
+			resp, _ := ioutil.ReadAll(resp.Body)
+			if string(resp) == "SUCCESS" {
+				fmt.Println("SUCCESS IN ELIMINATING ALL CONTAINERS")
+			}
 			return
-		}
-		resp, _ := ioutil.ReadAll(resp.Body)
-		if string(resp) == "SUCCESS" {
-			fmt.Println("SUCCESS IN ELIMINATING ALL CONTAINERS")
-		}
-		return
-	}
+		}*/
 	return
 }
