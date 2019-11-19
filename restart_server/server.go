@@ -1,4 +1,4 @@
-package main
+package restart_server
 
 import (
 	"bytes"
@@ -9,13 +9,19 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"path"
+
+	"github.com/astaxie/beego/config/env"
 )
 
 func main() {
-	srv := &http.Server{Addr: ":30001"}
-	script_path := "/home/ubuntu/dockerimages/selenium/zalenium/run.sh"
+	home := env.Get("HOME", "/home/ubuntu")
+	Run("", 30001, path.Join(home, "dockerimages/selenium/zalenium/run.sh"))
+}
+func Run(Host string, Port uint, scriptPath string) {
+	srv := &http.Server{Addr: fmt.Sprintf("%s:%d", Host, Port)}
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		cmd := exec.Command("/bin/sh", script_path)
+		cmd := exec.Command("/bin/sh", scriptPath)
 		var out bytes.Buffer
 		cmd.Stdout = &out
 		err := cmd.Run()
@@ -43,5 +49,4 @@ func main() {
 	if err := srv.Shutdown(context.Background()); err != nil {
 		log.Fatal(err)
 	}
-
 }

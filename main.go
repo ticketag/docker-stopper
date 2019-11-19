@@ -5,10 +5,15 @@ import (
 	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"github.com/urfave/cli"
+
 	"os"
 	"sort"
 	"strconv"
 	"time"
+
+	"github.com/ticketag/docker-stopper/commands"
+	"github.com/ticketag/docker-stopper/restart_server"
 )
 
 func main() {
@@ -20,6 +25,52 @@ type ByCreated []types.Container
 func (a ByCreated) Len() int           { return len(a) }
 func (a ByCreated) Less(i, j int) bool { return a[i].Created < a[j].Created }
 func (a ByCreated) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+
+func runCliApp() {
+	cliapp := cli.NewApp()
+	cliapp.Name = "Docker restarter"
+	cliapp.Usage = "Watcher per container selenium"
+	cliapp.Version = "0.1"
+	cliapp.Compiled = time.Now()
+	cliapp.Copyright = "(c) Ticketag"
+	cliapp.HelpName = "docker-restarter"
+	cliapp.Flags = []cli.Flag{}
+	serverArgs := commands.ServerArgs{}
+	cliapp.Commands = []cli.Command{
+		{
+			Name:      "server",
+			Aliases:   []string{"s"},
+			Flags:     serverArgs.CliFlags(),
+			Usage:     "runserver --host localhost --port 30001",
+			ArgsUsage: "",
+			Action: func(c *cli.Context) error {
+				restart_server.Run(serverArgs.Host, serverArgs.Port, serverArgs.ScriptPath)
+				return nil
+			},
+		},
+		{
+			Name:      "restarter",
+			Aliases:   []string{"r"},
+			Flags:     serverArgs.CliFlags(),
+			Usage:     "restarter",
+			ArgsUsage: "",
+			Action: func(c *cli.Context) error {
+				run()
+				return nil
+			},
+		},
+		{
+			Name:      "install",
+			Aliases:   []string{"i"},
+			Usage:     "install",
+			ArgsUsage: "",
+			Action: func(c *cli.Context) error {
+				commands.InstallService()
+				return nil
+			},
+		},
+	}
+}
 
 func run() {
 	ctx := context.Background()
