@@ -19,7 +19,9 @@ func main() {
 	Run("", 30001, path.Join(home, "dockerimages/selenium/zalenium/run.sh"))
 }
 func Run(Host string, Port uint, scriptPath string) {
-	srv := &http.Server{Addr: fmt.Sprintf("%s:%d", Host, Port)}
+	serverAddr := fmt.Sprintf("%s:%d", Host, Port)
+	srv := &http.Server{Addr: serverAddr}
+	fmt.Println("Server running on: ", serverAddr)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		cmd := exec.Command("/bin/sh", scriptPath)
 		var out bytes.Buffer

@@ -17,7 +17,7 @@ import (
 )
 
 func main() {
-	run()
+	runCliApp()
 }
 
 type ByCreated []types.Container
@@ -41,7 +41,7 @@ func runCliApp() {
 			Name:      "server",
 			Aliases:   []string{"s"},
 			Flags:     serverArgs.CliFlags(),
-			Usage:     "runserver --host localhost --port 30001",
+			Usage:     "server --host localhost --port 30001",
 			ArgsUsage: "",
 			Action: func(c *cli.Context) error {
 				restart_server.Run(serverArgs.Host, serverArgs.Port, serverArgs.ScriptPath)
@@ -65,11 +65,15 @@ func runCliApp() {
 			Usage:     "install",
 			ArgsUsage: "",
 			Action: func(c *cli.Context) error {
+				fmt.Println("Installing...")
 				commands.InstallService()
 				return nil
 			},
 		},
 	}
+
+	//cliapp.Action = cliapp.Command("restarter").Action
+	_ = cliapp.Run(os.Args)
 }
 
 func run() {
@@ -117,7 +121,8 @@ func run() {
 				fmt.Println(fmt.Sprintf("DOCKER STOPPED: %v", seleniumContainers[i].ID))
 			}
 		}
-
+	} else {
+		fmt.Println("OK ", len(seleniumContainers))
 	} /*
 		httpClient := http.Client{
 			Timeout: 5 * time.Second,
