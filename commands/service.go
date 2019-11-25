@@ -23,11 +23,11 @@ WantedBy=multi-user.target
 `
 const shFile = `#!/bin/bash
 echo "Starting server..."
-%s server
+%s server --path %s
 `
 const systemDPath = `/etc/systemd/system/`
 
-func InstallService() {
+func InstallService(args *ServerArgs) {
 	ex, err := os.Executable()
 	if err != nil {
 		panic(err)
@@ -41,7 +41,7 @@ func InstallService() {
 		log.Fatal(err)
 	}*/
 
-	shScript := fmt.Sprintf(shFile, ex)
+	shScript := fmt.Sprintf(shFile, ex, args.ScriptPath)
 
 	scriptPath := path.Join(home, exName+".sh")
 	svcManifest := fmt.Sprintf(svc, home, scriptPath)

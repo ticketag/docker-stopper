@@ -63,10 +63,11 @@ func runCliApp() {
 			Name:      "install",
 			Aliases:   []string{"i"},
 			Usage:     "install",
+			Flags:     serverArgs.CliFlags(),
 			ArgsUsage: "",
 			Action: func(c *cli.Context) error {
 				fmt.Println("Installing...")
-				commands.InstallService()
+				commands.InstallService(&serverArgs)
 				return nil
 			},
 		},
