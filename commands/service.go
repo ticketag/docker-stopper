@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 )
@@ -55,6 +56,12 @@ func InstallService(args *ServerArgs) {
 	}
 	fmt.Println("installed script: ", scriptPath)
 	if err := ioutil.WriteFile(installPath, []byte(svcManifest), 0644); err != nil {
+		log.Fatal(err)
+	}
+	//systemctl daemon-reload
+	cmd := exec.Command("systemctl", "daemon-reload")
+	if err := cmd.Run(); err != nil {
+		fmt.Println("Daemon reload error")
 		log.Fatal(err)
 	}
 	fmt.Println("Service installed")
